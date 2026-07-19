@@ -12,7 +12,8 @@ const TIMEOUT_MS = 9_000;
 const PERIOD_VI: Record<Period, string> = {
   morning: "buổi sáng",
   afternoon: "buổi chiều",
-  night: "buổi tối",
+  evening: "buổi tối",
+  night: "buổi đêm",
 };
 
 interface GreetingPayload {
@@ -31,10 +32,11 @@ function buildSystemPrompt(): string {
     `- greeting: lời chúc chính, 1-3 câu, BẮT BUỘC mở đầu bằng ngày tháng được cung cấp (ví dụ: "Hôm nay 22/7 rồi, chúc ${XUNG_HO_EM}...").`,
     "- Nếu là thứ Hai: lồng ý \"tuần mới\". Nếu là thứ Bảy hoặc Chủ nhật: lồng ý \"cuối tuần\".",
     "- Buổi sáng: tươi tắn, tiếp năng lượng. Buổi chiều: dịu, nhắc nghỉ tay, uống nước.",
-    "- Buổi tối: nhẹ nhàng, chúc ngủ ngon. TUYỆT ĐỐI KHÔNG nhắc tới việc học/ôn thi/bài vở vào buổi tối — để cô ấy nghỉ.",
+    "- Buổi tối (18:00–21:29): ấm áp, thư giãn sau một ngày dài (ăn tối, nghỉ ngơi, làm điều mình thích). TUYỆT ĐỐI KHÔNG nhắc tới việc học/ôn thi/bài vở, và CHƯA phải lúc chúc ngủ — đây là lúc thư giãn trước khi đi ngủ, không phải lời chúc ngủ ngon.",
+    "- Buổi đêm (21:30 trở đi): nhẹ nhàng, tập trung chúc ngủ ngon, giục đi ngủ sớm. TUYỆT ĐỐI KHÔNG nhắc tới việc học/ôn thi/bài vở.",
     `- Nếu la_dem_truoc_ngay_thi = true (hôm nay là ngày TRƯỚC ngày thi): đây là lời dặn dò cho đêm trước. Nhấn mạnh: mai ${XUNG_HO_EM} thi rồi, tối nay ngủ sớm, ĐỪNG thức khuya ôn nữa, ${XUNG_HO_EM} đã chuẩn bị đủ, chúc mai thi thật tốt và bình tĩnh. Bỏ qua quy tắc buổi trong ngày, ưu tiên nội dung này.`,
     `- Nếu la_ngay_thi = true (đúng hôm thi): chúc ${XUNG_HO_EM} bình tĩnh, tin vào bản thân, làm bài chắc tay.`,
-    `- encouragement: MỘT câu ngắn (tối đa 20 từ) làm dòng phụ. Buổi sáng/chiều thì động viên chuyện ôn thi (nhắc nghỉ ngơi, tin vào nỗ lực, thi cử chỉ là một chặng, dù kết quả thế nào vẫn thương...). Buổi tối thì chỉ là một câu dỗ dành nhẹ nhàng, KHÔNG nhắc việc học.`,
+    `- encouragement: MỘT câu ngắn (tối đa 20 từ) làm dòng phụ. Buổi sáng/chiều thì động viên chuyện ôn thi (nhắc nghỉ ngơi, tin vào nỗ lực, thi cử chỉ là một chặng, dù kết quả thế nào vẫn thương...). Buổi tối và buổi đêm thì chỉ là một câu dỗ dành nhẹ nhàng, KHÔNG nhắc việc học.`,
     "",
     "GIỌNG VĂN: ấm áp, tự nhiên, ngọt ngào vừa phải, KHÔNG sến súa, KHÔNG sáo rỗng, KHÔNG dùng emoji. Mỗi lần phải là một cách diễn đạt khác nhau.",
     "",

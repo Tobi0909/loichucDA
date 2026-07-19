@@ -53,8 +53,10 @@ export default function FallingHearts({ enabled, period }: Props) {
     const nightHues = [275, 300, 220];
     const dayHues = [340, 330, 285];
 
+    const isDark = period === "evening" || period === "night";
+
     const makeParticle = (seeded: boolean): Particle => {
-      const hues = period === "night" ? nightHues : dayHues;
+      const hues = isDark ? nightHues : dayHues;
       return {
         x: Math.random() * width,
         y: seeded ? Math.random() * height : -20 - Math.random() * 60,
@@ -123,10 +125,9 @@ export default function FallingHearts({ enabled, period }: Props) {
         ctx.translate(p.x, p.y);
         ctx.rotate(p.angle);
         ctx.globalAlpha = p.alpha;
-        ctx.fillStyle =
-          period === "night"
-            ? `hsl(${p.hue} 70% 78%)`
-            : `hsl(${p.hue} 80% 72%)`;
+        ctx.fillStyle = isDark
+          ? `hsl(${p.hue} 70% 78%)`
+          : `hsl(${p.hue} 80% 72%)`;
         if (p.kind === 0) drawHeart(p);
         else drawPetal(p);
         ctx.restore();

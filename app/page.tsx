@@ -17,12 +17,14 @@ import { getVNTime, type Period, type VNTime } from "@/lib/time";
 const PERIOD_HELLO: Record<Period, string> = {
   morning: "Chào buổi sáng",
   afternoon: "Chào buổi chiều",
-  night: "Chào buổi tối",
+  evening: "Chào buổi tối",
+  night: "Chúc ngủ ngon",
 };
 
 const PERIOD_EMOJI: Record<Period, string> = {
   morning: "🌅",
   afternoon: "🌤️",
+  evening: "🌆",
   night: "🌙",
 };
 
@@ -92,7 +94,7 @@ export default function Page() {
   /**
    * Cho phép xem trước một buổi hoặc mốc ngày thi bất kỳ bằng query param,
    * tiện để kiểm tra giao diện mà không cần đổi ngày thi thật:
-   *   /?buoi=sang | /?buoi=chieu | /?buoi=toi
+   *   /?buoi=sang | /?buoi=chieu | /?buoi=toi | /?buoi=dem
    *   /?thi=truoc  (xem lời chúc đêm trước ngày thi)
    *   /?thi=hom    (xem lời chúc đúng ngày thi)
    * Không có param thì dùng giờ thật (Asia/Ho_Chi_Minh).
@@ -106,7 +108,8 @@ export default function Page() {
     const override: Record<string, Period> = {
       sang: "morning",
       chieu: "afternoon",
-      toi: "night",
+      toi: "evening",
+      dem: "night",
     };
     const p = q ? override[q] : undefined;
     let next = p ? { ...t, period: p } : t;
@@ -148,13 +151,16 @@ export default function Page() {
   }, [readTime]);
 
   const period: Period = time?.period ?? "morning";
-  const night = period === "night";
+  // Trời đã tối từ buổi tối (18:00), không chỉ riêng buổi đêm — nên giao diện tối
+  // (nền đêm, sao, chữ sáng màu) áp dụng cho cả hai buổi.
+  const dark = period === "evening" || period === "night";
+  const night = dark;
 
   return (
     <main
       className={`period-bg relative min-h-[100svh] w-full overflow-hidden period-${period}`}
     >
-      <StarField enabled={night && effectsOn} />
+      <StarField enabled={dark && effectsOn} />
       <FallingHearts enabled={effectsOn} period={period} />
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-2xl flex-col px-5 pb-8 pt-6 sm:px-8 sm:pt-10">

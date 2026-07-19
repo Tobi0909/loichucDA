@@ -1,5 +1,6 @@
 import {
   DATE_PREFIXES,
+  EVENING_SOFT_NOTES,
   EXAM_DAY_ENCOURAGEMENTS,
   EXAM_DAY_GREETINGS,
   EXAM_ENCOURAGEMENTS,
@@ -28,6 +29,7 @@ type DeckKey =
   | "prefix"
   | "monday"
   | "weekend"
+  | "eveningNote"
   | "nightNote"
   | "encouragement"
   | "examGreeting"
@@ -41,10 +43,12 @@ export function createGreetingDecks(): Record<DeckKey, Deck<string>> {
   return {
     morning: new Deck(GREETINGS_BY_PERIOD.morning),
     afternoon: new Deck(GREETINGS_BY_PERIOD.afternoon),
+    evening: new Deck(GREETINGS_BY_PERIOD.evening),
     night: new Deck(GREETINGS_BY_PERIOD.night),
     prefix: new Deck(DATE_PREFIXES),
     monday: new Deck(MONDAY_NOTES),
     weekend: new Deck(WEEKEND_NOTES),
+    eveningNote: new Deck(EVENING_SOFT_NOTES),
     nightNote: new Deck(NIGHT_SOFT_NOTES),
     encouragement: new Deck(EXAM_ENCOURAGEMENTS),
     examGreeting: new Deck(EXAM_DAY_GREETINGS),
@@ -106,10 +110,17 @@ export function buildFallbackGreeting(
 
   const greeting = finish([prefix + body, ...notes].join(" "));
 
+  const softDeck =
+    t.period === "night"
+      ? decks.nightNote
+      : t.period === "evening"
+        ? decks.eveningNote
+        : null;
+
   const encouragement = capitalize(
     finish(
-      t.period === "night"
-        ? (decks.nightNote.draw() ?? "{em} nghỉ ngơi thật ngon nha.")
+      softDeck
+        ? (softDeck.draw() ?? "{em} nghỉ ngơi thật ngon nha.")
         : (decks.encouragement.draw() ?? "{anh} luôn tin ở {em}."),
     ),
   );

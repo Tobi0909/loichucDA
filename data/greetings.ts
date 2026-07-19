@@ -109,6 +109,54 @@ export const AFTERNOON_GREETINGS: string[] = [
   "{anh} chúc {em} buổi chiều thoải mái, đừng ép mình quá nha, cơ thể và tinh thần của {em} đều cần được đối xử tử tế.",
 ];
 
+/** Buổi tối (18:00–21:29) — thư giãn sau một ngày dài, cố ý không nhắc chuyện học. */
+export const EVENING_GREETINGS: string[] = [
+  "chúc {em} một buổi tối thật thư giãn, ngày dài đã trôi qua rồi, giờ là lúc {em} được thuộc về riêng mình.",
+  "tối rồi, {anh} chúc {em} ăn tối ngon miệng và bỏ lại hết những bận rộn của cả ngày ở phía sau cửa.",
+  "chúc {em} buổi tối nhẹ nhõm, thay bộ đồ thoải mái, ngồi xuống và cho phép mình không làm gì cả một lúc.",
+  "chúc {em} tối nay ấm bụng, ấm lòng, một bữa tối tử tế sẽ giúp {em} thấy dễ chịu hơn nhiều sau cả ngày dài.",
+  "{anh} chúc {em} một buổi tối chậm rãi, không cần vội vàng làm gì nữa, mọi việc gấp gáp đã ở lại cùng ban ngày rồi.",
+  "chúc {em} buổi tối vui vẻ, làm điều gì đó chỉ vì {em} thích thôi, nghe một bài hát hay xem gì đó nhẹ nhàng cũng được.",
+  "chúc {em} tối nay có một khoảng lặng dễ chịu, tắt bớt thông báo điện thoại đi cũng được, chẳng có gì gấp tới mức không đợi được tới mai.",
+  "chúc {em} một buổi tối ấm áp, dù {anh} không ở cạnh nhưng {anh} vẫn đang nghĩ tới {em} vào đúng lúc này.",
+  "{anh} chúc {em} tối nay được nghỉ ngơi đúng nghĩa, không phải nghỉ trong lúc vẫn còn nghĩ tới việc chưa xong.",
+  "chúc {em} buổi tối dễ chịu, tắm rửa xong rồi thì cứ thả lỏng người ra, hôm nay {em} đã cố gắng đủ nhiều rồi.",
+  "chúc {em} tối nay gặp toàn chuyện nhẹ nhàng, không có tin nhắn công việc nào làm phiền khoảng thời gian này của {em} cả.",
+  "chúc {em} một buổi tối yên ả, cứ để căn phòng nhỏ của {em} là nơi duy nhất {em} cần nghĩ tới lúc này.",
+  "{anh} chúc {em} tối nay ăn no, cười nhiều, và thấy lòng nhẹ hơn hẳn so với lúc mới tan làm hay tan học.",
+  "chúc {em} buổi tối thong thả, {em} không cần tranh thủ làm thêm gì nữa đâu, cứ để buổi tối là buổi tối thôi.",
+  "chúc {em} tối nay được là chính mình, không vai trò, không deadline, chỉ có {em} và những gì {em} thật sự muốn làm.",
+  "chúc {em} một buổi tối ấm cúng, nếu trời se lạnh thì khoác thêm áo nha {em}, đừng để mình bị lạnh vì mải làm việc khác.",
+  "{anh} chúc {em} tối nay thảnh thơi, gọi điện cho ai đó {em} thương hoặc chỉ đơn giản là ngồi yên cũng đều tốt cả.",
+  "chúc {em} buổi tối nhẹ nhàng trôi qua, không có gì phải giải quyết gấp, mọi thứ đều có thể đợi đến ngày mai.",
+  "chúc {em} tối nay thấy biết ơn một chút về ngày hôm nay, dù nó dễ hay khó thì {em} cũng đã đi qua trọn vẹn rồi.",
+  "chúc {em} một buổi tối dịu dàng, giống như cách {em} vẫn dịu dàng với mọi người suốt cả ngày dài.",
+  "{anh} chúc {em} tối nay không phải nghĩ ngợi nhiều, cứ để đầu óc trôi theo bất cứ điều gì khiến {em} thấy vui.",
+  "chúc {em} buổi tối được sạc lại năng lượng, một tách trà ấm hay một bộ phim quen thuộc cũng đủ để {em} thấy dễ chịu rồi.",
+  "chúc {em} tối nay có thời gian cho riêng mình, dù chỉ nửa tiếng thôi cũng đáng quý, vì cả ngày {em} đã dành cho bao nhiêu thứ khác rồi.",
+  "chúc {em} một buổi tối êm đềm, ngoài kia ồn ào thế nào cũng được, miễn là góc nhỏ của {em} vẫn yên tĩnh.",
+  "{anh} chúc {em} tối nay cười thật nhiều, dù là vì chuyện gì cũng được, chỉ cần {em} vui là {anh} thấy nhẹ lòng rồi.",
+  "chúc {em} buổi tối trọn vẹn, ngày hôm nay coi như đã xong, phần còn lại của tối nay là dành để {em} nghỉ ngơi.",
+  "chúc {em} tối nay không phải trả lời thêm tin nhắn nào cần suy nghĩ nhiều, để đầu óc {em} được thảnh thơi một chút.",
+  "chúc {em} một buổi tối ấm áp bên những gì {em} yêu thích, một cuốn truyện, một bản nhạc, hay đơn giản là sự im lặng dễ chịu.",
+  "{anh} chúc {em} tối nay bớt hết mệt mỏi trong người, để lát nữa khi lên giường {em} đã thấy nhẹ nhõm sẵn rồi.",
+  "chúc {em} buổi tối an yên, mọi lo toan của ban ngày cứ để nó ở ngoài cửa, tối nay là thời gian dành riêng cho {em} thôi.",
+];
+
+/** Dòng phụ dịu nhẹ cho buổi tối (18:00–21:29) — không nhắc học, cũng chưa hẳn là chuyện đi ngủ. */
+export const EVENING_SOFT_NOTES: string[] = [
+  "Ăn tối chưa {em}? Nhớ ăn đầy đủ nha, đừng để bụng đói kéo dài tới tận khuya.",
+  "Cởi bỏ hết những gì gồng suốt ngày dài đi, tối nay {em} chỉ cần là chính mình thôi.",
+  "Không cần làm thêm gì nữa đâu {em}, hôm nay như vậy là đủ rồi.",
+  "{anh} chỉ mong tối nay {em} thấy thoải mái, không cần gì to tát hơn thế.",
+  "Dành chút thời gian cho bản thân trước khi trời tối hẳn nha {em}.",
+  "Buổi tối là của {em}, không phải của công việc, {em} nhớ giữ lấy khoảng thời gian này nhé.",
+  "Nếu mệt thì cứ ngồi yên một lúc, không cần vội làm gì tiếp theo cả.",
+  "{em} đã qua một ngày dài rồi, tối nay cho phép mình chậm lại một chút nha.",
+  "Nhắn cho {anh} vài dòng nếu {em} rảnh nhé, không thì {anh} vẫn hiểu {em} đang nghỉ ngơi.",
+  "Cứ để tối nay trôi qua thật nhẹ, không deadline nào đáng để {em} đánh đổi sự thoải mái lúc này.",
+];
+
 export const NIGHT_GREETINGS: string[] = [
   "chúc {em} một buổi tối bình yên và ngủ thật ngon nhé. Cả ngày dài {em} đã cố gắng nhiều rồi, giờ là lúc để cơ thể {em} được nghỉ ngơi trọn vẹn.",
   "tối rồi, {anh} chúc {em} gác hết mọi thứ lại và nghỉ ngơi. Những gì chưa xong hôm nay thì để ngày mai, đêm nay chỉ dành cho giấc ngủ thôi.",
@@ -240,5 +288,6 @@ export const EXAM_DAY_ENCOURAGEMENTS: string[] = [
 export const GREETINGS_BY_PERIOD: Record<Period, string[]> = {
   morning: MORNING_GREETINGS,
   afternoon: AFTERNOON_GREETINGS,
+  evening: EVENING_GREETINGS,
   night: NIGHT_GREETINGS,
 };

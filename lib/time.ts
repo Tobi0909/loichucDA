@@ -1,6 +1,6 @@
 import { EXAM_DATE, TIME_ZONE } from "./config";
 
-export type Period = "morning" | "afternoon" | "night";
+export type Period = "morning" | "afternoon" | "evening" | "night";
 
 export interface VNTime {
   /** 0-23, giờ Việt Nam */
@@ -46,7 +46,8 @@ const WEEKDAY_LABELS = [
 const PERIOD_LABELS: Record<Period, string> = {
   morning: "Buổi sáng",
   afternoon: "Buổi chiều",
-  night: "Buổi tối",
+  evening: "Buổi tối",
+  night: "Buổi đêm",
 };
 
 /** Đọc các thành phần ngày giờ tại Asia/Ho_Chi_Minh, bất kể máy đang ở đâu. */
@@ -88,10 +89,15 @@ function readVNParts(date: Date) {
   };
 }
 
-export function periodFromHour(hour: number): Period {
+/**
+ * Phân buổi: sáng 05:00–11:59 · chiều 12:00–17:59 · tối 18:00–21:29 ·
+ * đêm 21:30–04:59 (mốc 21:30 nên cần cả phút, không chỉ giờ).
+ */
+export function periodFromHourMinute(hour: number, minute: number): Period {
   if (hour >= 5 && hour < 12) return "morning";
   if (hour >= 12 && hour < 18) return "afternoon";
-  return "night";
+  if (hour < 5 || hour > 21 || (hour === 21 && minute >= 30)) return "night";
+  return "evening";
 }
 
 function pad(n: number): string {
@@ -108,7 +114,7 @@ function daysBetweenIso(fromIso: string, toIso: string): number {
 
 export function getVNTime(now: Date = new Date()): VNTime {
   const p = readVNParts(now);
-  const period = periodFromHour(p.hour);
+  const period = periodFromHourMinute(p.hour, p.minute);
   const isoDate = `${p.year}-${pad(p.month)}-${pad(p.day)}`;
   const weekdayLabel = WEEKDAY_LABELS[p.weekday] ?? "hôm nay";
   const shortDate = `${p.day}/${p.month}`;

@@ -35,6 +35,10 @@ body {
   background: linear-gradient(160deg, #fff4ec 0%, #ffe6ee 40%, #f0e4ff 75%, #e6ecff 100%);
 }
 
+.period-evening {
+  background: linear-gradient(170deg, #2b2454 0%, #392a5c 35%, #4a3466 65%, #5a3a5f 100%);
+}
+
 .period-night {
   background: linear-gradient(170deg, #131a3a 0%, #1d2350 40%, #2a2258 75%, #3a2a55 100%);
 }
