@@ -30,14 +30,69 @@ export const MONDAY_NOTES: string[] = [
   "Thứ Hai lúc nào cũng hơi ngại, nhưng {anh} tin {em} sẽ vào guồng nhanh thôi, cứ để mọi thứ trôi theo nhịp của riêng {em}.",
 ];
 
-export const WEEKEND_NOTES: string[] = [
+/** Thứ Sáu — bung xõa, háo hức vì cuối tuần đã kề bên. */
+export const FRIDAY_NOTES: string[] = [
+  "Thứ Sáu rồi, {em} coi như đã băng qua được cả một tuần dài, tối nay cho phép mình xả hơi một chút cũng được.",
+  "Cuối tuần chỉ còn cách {em} một đêm nay thôi, {anh} chúc {em} thứ Sáu này nhẹ tênh, làm gì cũng thấy hào hứng hơn ngày thường.",
+  "{anh} chúc {em} thứ Sáu vui vẻ, có thể tự thưởng cho mình một điều gì đó nho nhỏ, vì cả tuần {em} đã cố gắng nhiều rồi.",
+  "Thứ Sáu là để thở phào, {em} cứ để đầu óc nhẹ nhõm dần, hai ngày phía trước sẽ là của riêng {em}.",
+  "Chúc {em} một thứ Sáu tràn năng lượng, cuối tuần đang vẫy gọi ngay phía trước rồi đó.",
+  "{anh} chúc {em} thứ Sáu này thật sảng khoái, tuần mới còn xa, còn hôm nay thì cứ tận hưởng đã.",
+];
+
+/** Thứ Bảy — ngày đầu cuối tuần, để nghỉ ngơi và làm điều mình thích. */
+export const SATURDAY_NOTES: string[] = [
   "Cuối tuần rồi, {em} cho phép mình nghỉ một chút nhé, sách vở để đó cũng không chạy đi đâu mất đâu.",
   "Cuối tuần mà, ngủ thêm mười lăm phút cũng chẳng ai trách đâu, cơ thể {em} xứng đáng được bù đắp sau một tuần dài.",
-  "Chúc {em} một ngày cuối tuần thật dễ chịu, làm điều gì đó chỉ vì {em} thích chứ không phải vì phải hoàn thành.",
+  "Chúc {em} một ngày thứ Bảy thật dễ chịu, làm điều gì đó chỉ vì {em} thích chứ không phải vì phải hoàn thành.",
   "Cuối tuần là để {em} thở, không phải để {em} chạy, nên hôm nay cứ ưu tiên bản thân trước đã nhé.",
-  "Cuối tuần rồi, nhớ dành cho bản thân một khoảng trống nha {em}, không lịch trình, không deadline, chỉ có {em} thôi.",
+  "Thứ Bảy rồi, nhớ dành cho bản thân một khoảng trống nha {em}, không lịch trình, không deadline, chỉ có {em} thôi.",
   "Hai ngày cuối tuần ngắn ngủi, {anh} chỉ mong {em} dùng nó để nạp lại năng lượng chứ không phải để lo lắng thêm.",
 ];
+
+/** Chủ nhật — ngày chữa lành, chuẩn bị tinh thần nhẹ nhàng cho tuần mới. */
+export const SUNDAY_NOTES: string[] = [
+  "Chủ nhật rồi, {em} cho phép mình chậm lại thật sự một ngày, không cần nghĩ tới thứ Hai vội đâu.",
+  "Chúc {em} một ngày Chủ nhật chữa lành, làm gì đó khiến lòng nhẹ đi, để đầu tuần tới {em} có thêm sức mà đi tiếp.",
+  "{anh} chúc {em} Chủ nhật này được nghỉ ngơi trọn vẹn, không deadline nào đáng để {em} đánh đổi ngày cuối tuần cuối cùng.",
+  "Chủ nhật là ngày của riêng {em}, không phải chuẩn bị hay lo lắng gì cho tuần sau cả, cứ để ngày mai lo chuyện của ngày mai.",
+  "Chúc {em} một Chủ nhật bình yên, {em} không cần làm gì to tát, chỉ cần thấy dễ chịu là đủ rồi.",
+  "{anh} chúc {em} Chủ nhật này chậm rãi và ấm áp, để khi thứ Hai tới {em} đã sẵn sàng chứ không phải gồng mình.",
+];
+
+/** Ghi chú thời tiết thực tế (Hà Nội) — chỉ dùng khi thời tiết đáng chú ý. */
+export const RAIN_NOTES: string[] = [
+  "Ngoài trời đang mưa đấy, {em} nhớ mang áo mưa hoặc ở trong nhà cho ấm nhé.",
+  "Trời mưa rồi, đường trơn, {em} đi lại cẩn thận hơn một chút nha.",
+  "Nghe nói ngoài kia đang mưa, {em} nhớ mang theo ô nếu phải ra ngoài nhé.",
+  "Trời mưa thế này chỉ muốn cuộn tròn trong chăn thôi, {em} nhớ giữ ấm nha.",
+  "Mưa rồi đó, {anh} chỉ mong {em} đi lại an toàn, đừng để ướt mà cảm lạnh.",
+];
+
+export const STORM_NOTES: string[] = [
+  "Ngoài trời đang có giông đấy, {em} hạn chế ra đường lúc này nha, ở trong nhà cho an toàn.",
+  "Trời đang giông bão, {em} nhớ đóng cửa sổ và ở yên trong nhà nhé, {anh} không yên tâm nếu {em} ra ngoài lúc này.",
+  "Ngoài kia sấm chớp dữ lắm, {em} cứ ở trong nhà, đợi tạnh hẳn rồi hẵng đi đâu.",
+];
+
+export const HOT_WEATHER_NOTES: string[] = [
+  "Trời đang nóng lắm đấy, {em} nhớ uống đủ nước và tránh nắng gắt giữa trưa nha.",
+  "Nắng nóng thế này {em} nhớ mang theo nước và đừng quên kem chống nắng nhé.",
+  "Trời nóng, {em} chọn chỗ mát mà ngồi, đừng để say nắng giữa chừng.",
+];
+
+export const COLD_WEATHER_NOTES: string[] = [
+  "Trời đang se lạnh đấy, {em} nhớ mặc thêm áo ấm trước khi ra ngoài nha.",
+  "Lạnh rồi đó, {em} đừng quên khoác thêm một lớp áo, giữ ấm cổ và tay chân nhé.",
+  "Trời trở lạnh, {anh} chỉ mong {em} đủ ấm, đừng vì vội mà quên khoác áo.",
+];
+
+export const WEATHER_NOTES: Record<"rain" | "storm" | "hot" | "cold", string[]> = {
+  rain: RAIN_NOTES,
+  storm: STORM_NOTES,
+  hot: HOT_WEATHER_NOTES,
+  cold: COLD_WEATHER_NOTES,
+};
 
 export const MORNING_GREETINGS: string[] = [
   "chúc {em} một buổi sáng thật nhẹ nhàng, đủ nắng để {em} có thêm chút động lực nhưng không đến mức khiến {em} phải vội vàng. Mong hôm nay đối xử dịu dàng với {em}, như cách {em} vẫn dịu dàng với mọi người xung quanh.",

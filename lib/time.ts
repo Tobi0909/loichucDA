@@ -25,6 +25,9 @@ export interface VNTime {
   /** "Hôm nay thứ Ba, 22/7" */
   fullDateLine: string;
   isMonday: boolean;
+  isFriday: boolean;
+  isSaturday: boolean;
+  isSunday: boolean;
   isWeekend: boolean;
   isExamDay: boolean;
   /** Ngày ngay trước ngày thi (daysToExam === 1) — lúc để dặn dò, chúc ngủ ngon */
@@ -134,6 +137,9 @@ export function getVNTime(now: Date = new Date()): VNTime {
     shortDate,
     fullDateLine: `Hôm nay ${weekdayLabel}, ${shortDate}`,
     isMonday: p.weekday === 1,
+    isFriday: p.weekday === 5,
+    isSaturday: p.weekday === 6,
+    isSunday: p.weekday === 0,
     isWeekend: p.weekday === 0 || p.weekday === 6,
     isExamDay: isoDate === EXAM_DATE,
     isExamEve: daysToExam === 1,

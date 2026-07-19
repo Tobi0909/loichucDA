@@ -3,16 +3,32 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ExamCountdown from "@/components/ExamCountdown";
 import FallingHearts from "@/components/FallingHearts";
+import Fireworks from "@/components/Fireworks";
 import MusicToggle from "@/components/MusicToggle";
 import StarField from "@/components/StarField";
+import { EASTER_EGGS } from "@/data/easterEgg";
 import { HER_NAME, SIGNATURE, XUNG_HO_EM } from "@/lib/config";
+import { Deck } from "@/lib/deck";
 import {
   buildFallbackGreeting,
   createGreetingDecks,
   type GreetingDecks,
   type GreetingPayload,
 } from "@/lib/fallback";
+import { MOOD_META, MOOD_ORDER, type Mood } from "@/lib/mood";
 import { getVNTime, type Period, type VNTime } from "@/lib/time";
+import { capitalize, fill, normalizeSentences } from "@/lib/text";
+import type { WeatherCondition } from "@/lib/weather";
+
+/** Tỉ lệ xuất hiện bất ngờ nhỏ thay cho lời chúc thường. */
+const EASTER_EGG_CHANCE = 0.05;
+
+function processEasterEgg(greeting: string, encouragement: string): GreetingPayload {
+  return {
+    greeting: capitalize(normalizeSentences(fill(greeting))),
+    encouragement: capitalize(normalizeSentences(fill(encouragement))),
+  };
+}
 
 const PERIOD_HELLO: Record<Period, string> = {
   morning: "Chào buổi sáng",
@@ -104,62 +120,117 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [effectsOn, setEffectsOn] = useState(true);
   const [animKey, setAnimKey] = useState(0);
+  // Tâm trạng {em} tự chọn — bổ sung thêm cho lời chúc theo buổi, không thay
+  // thế nó. Không dùng localStorage nên reset mỗi lần mở lại trang.
+  const [mood, setMood] = useState<Mood | null>(null);
+  const [fireworksActive, setFireworksActive] = useState(false);
 
   // Toàn bộ trạng thái chống lặp nằm trong bộ nhớ (không localStorage).
   const decksRef = useRef<GreetingDecks | null>(null);
   if (decksRef.current === null) decksRef.current = createGreetingDecks();
 
+  const easterEggDeckRef = useRef<Deck<(typeof EASTER_EGGS)[number]> | null>(
+    null,
+  );
+  if (easterEggDeckRef.current === null) {
+    easterEggDeckRef.current = new Deck(EASTER_EGGS);
+  }
+
   const requestIdRef = useRef(0);
 
   /** Lấy lời chúc: ưu tiên API, lỗi bất kỳ thì im lặng dùng kho tĩnh. */
-  const loadGreeting = useCallback(async (current: VNTime) => {
-    const decks = decksRef.current;
-    if (!decks) return;
+  const loadGreeting = useCallback(
+    async (current: VNTime, currentMood: Mood | null) => {
+      const decks = decksRef.current;
+      if (!decks) return;
 
-    const myId = ++requestIdRef.current;
-    setLoading(true);
+      const myId = ++requestIdRef.current;
+      setLoading(true);
 
-    let next: GreetingPayload | null = null;
-    try {
-      const res = await fetch("/api/greeting", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const data: unknown = await res.json();
-        if (
-          typeof data === "object" &&
-          data !== null &&
-          (data as { ok?: unknown }).ok === true
-        ) {
-          const d = data as { greeting?: unknown; encouragement?: unknown };
-          if (typeof d.greeting === "string" && d.greeting.trim().length > 4) {
-            next = {
-              greeting: d.greeting.trim(),
-              encouragement:
-                typeof d.encouragement === "string"
-                  ? d.encouragement.trim()
-                  : "",
-            };
-          }
+      // Bất ngờ nhỏ, thay cho lời chúc thường — không áp dụng khi {em} đã chủ
+      // động chọn tâm trạng, hoặc vào đêm trước/đúng ngày thi (giữ nghiêm túc).
+      const eggEligible =
+        !currentMood && !current.isExamEve && !current.isExamDay;
+      if (eggEligible && Math.random() < EASTER_EGG_CHANCE) {
+        const egg = easterEggDeckRef.current?.draw();
+        if (egg) {
+          if (myId !== requestIdRef.current) return;
+          setPayload(processEasterEgg(egg.greeting, egg.encouragement));
+          setAnimKey((k) => k + 1);
+          setLoading(false);
+          setFireworksActive(true);
+          return;
         }
       }
-    } catch {
-      // nuốt lỗi — fail-open
-    }
 
-    if (!next) next = buildFallbackGreeting(decks, current);
-    // Dòng phụ trống thì bù bằng kho tĩnh để bố cục luôn giống nhau.
-    if (next.encouragement.length === 0) {
-      next.encouragement = buildFallbackGreeting(decks, current).encouragement;
-    }
+      let next: GreetingPayload | null = null;
+      let weather: WeatherCondition | null = null;
+      try {
+        const res = await fetch("/api/greeting", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ mood: currentMood }),
+          cache: "no-store",
+        });
+        if (res.ok) {
+          const data: unknown = await res.json();
+          if (typeof data === "object" && data !== null) {
+            const d = data as {
+              ok?: unknown;
+              greeting?: unknown;
+              encouragement?: unknown;
+              weather?: unknown;
+            };
 
-    if (myId !== requestIdRef.current) return; // đã có yêu cầu mới hơn
-    setPayload(next);
-    setAnimKey((k) => k + 1);
-    setLoading(false);
-  }, []);
+            if (typeof d.weather === "object" && d.weather !== null) {
+              const w = (d.weather as { condition?: unknown }).condition;
+              if (
+                w === "rain" ||
+                w === "storm" ||
+                w === "hot" ||
+                w === "cold"
+              ) {
+                weather = w;
+              }
+            }
+
+            if (
+              d.ok === true &&
+              typeof d.greeting === "string" &&
+              d.greeting.trim().length > 4
+            ) {
+              next = {
+                greeting: d.greeting.trim(),
+                encouragement:
+                  typeof d.encouragement === "string"
+                    ? d.encouragement.trim()
+                    : "",
+              };
+            }
+          }
+        }
+      } catch {
+        // nuốt lỗi — fail-open
+      }
+
+      const ctx = { weather, mood: currentMood };
+      if (!next) next = buildFallbackGreeting(decks, current, ctx);
+      // Dòng phụ trống thì bù bằng kho tĩnh để bố cục luôn giống nhau.
+      if (next.encouragement.length === 0) {
+        next.encouragement = buildFallbackGreeting(
+          decks,
+          current,
+          ctx,
+        ).encouragement;
+      }
+
+      if (myId !== requestIdRef.current) return; // đã có yêu cầu mới hơn
+      setPayload(next);
+      setAnimKey((k) => k + 1);
+      setLoading(false);
+    },
+    [],
+  );
 
   /**
    * Cho phép xem trước một buổi hoặc mốc ngày thi bất kỳ bằng query param,
@@ -198,8 +269,21 @@ export default function Page() {
   useEffect(() => {
     const t = readTime();
     setTime(t);
-    void loadGreeting(t);
+    void loadGreeting(t, null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadGreeting, readTime]);
+
+  /** Chọn/bỏ chọn tâm trạng — bấm lại vào tâm trạng đang chọn để bỏ chọn. */
+  const handleMoodSelect = useCallback(
+    (m: Mood) => {
+      const next = mood === m ? null : m;
+      setMood(next);
+      const t = readTime();
+      setTime(t);
+      void loadGreeting(t, next);
+    },
+    [mood, readTime, loadGreeting],
+  );
 
   // Theo dõi chuyển buổi / sang ngày mới
   useEffect(() => {
@@ -235,6 +319,10 @@ export default function Page() {
     >
       <StarField enabled={dark && effectsOn} />
       <FallingHearts enabled={effectsOn} period={period} />
+      <Fireworks
+        active={fireworksActive && effectsOn}
+        onDone={() => setFireworksActive(false)}
+      />
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-2xl flex-col px-5 pb-8 pt-6 sm:px-8 sm:pt-10">
         {/* Thanh điều khiển */}
@@ -253,7 +341,15 @@ export default function Page() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setEffectsOn((v) => !v)}
+              onClick={() =>
+                setEffectsOn((v) => {
+                  const next = !v;
+                  // Tắt hiệu ứng thì dọn luôn pháo hoa đang chờ, tránh phát
+                  // lại một chùm pháo hoa cũ khi bật lại về sau.
+                  if (!next) setFireworksActive(false);
+                  return next;
+                })
+              }
               aria-pressed={effectsOn}
               aria-label={effectsOn ? "Tắt hiệu ứng" : "Bật hiệu ứng"}
               title={effectsOn ? "Tắt hiệu ứng rơi" : "Bật hiệu ứng rơi"}
@@ -268,6 +364,36 @@ export default function Page() {
             </button>
             <MusicToggle night={night} />
           </div>
+        </div>
+
+        {/* Mood picker — bổ sung thêm cho lời chúc theo buổi, không bắt buộc chọn */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          {MOOD_ORDER.map((m) => {
+            const meta = MOOD_META[m];
+            const selected = mood === m;
+            return (
+              <button
+                key={m}
+                type="button"
+                onClick={() => handleMoodSelect(m)}
+                aria-pressed={selected}
+                title={`Tâm trạng: ${meta.label}`}
+                className={[
+                  "glass flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition active:scale-95 sm:text-sm",
+                  selected
+                    ? night
+                      ? "border-fuchsia-300/60 bg-fuchsia-400/25 text-night"
+                      : "border-fuchsia-300 bg-fuchsia-100 text-day"
+                    : night
+                      ? "border-white/15 bg-white/10 text-night-soft hover:bg-white/20"
+                      : "border-white/60 bg-white/40 text-day-soft hover:bg-white/60",
+                ].join(" ")}
+              >
+                <span aria-hidden="true">{meta.emoji}</span>
+                {meta.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Nội dung chính */}
@@ -352,7 +478,7 @@ export default function Page() {
             onClick={() => {
               const t = readTime();
               setTime(t);
-              void loadGreeting(t);
+              void loadGreeting(t, mood);
             }}
             className={[
               "mt-6 rounded-full px-7 py-3 text-base font-semibold shadow-md transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60",

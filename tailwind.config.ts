@@ -33,6 +33,14 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0) rotate(-2deg)" },
           "50%": { transform: "translateY(-10px) rotate(2deg)" },
         },
+        fireworkParticle: {
+          "0%": { transform: "translate(0, 0) scale(1)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": {
+            transform: "translate(var(--dx), var(--dy)) scale(0.3)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         fadeSlide: "fadeSlide 0.6s ease-out both",
@@ -40,6 +48,7 @@ const config: Config = {
         pulseSoft: "pulseSoft 2.4s ease-in-out infinite",
         floatUp: "floatUp 4s linear infinite",
         moonFloat: "moonFloat 6s ease-in-out infinite",
+        fireworkParticle: "fireworkParticle 1.1s ease-out forwards",
       },
     },
   },
