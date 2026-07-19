@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Nền gradient theo buổi, chuyển màu mượt khi đổi buổi */
+.period-bg {
+  transition: background 1.2s ease;
+  /* Không dùng background-attachment: fixed — khi nội dung cao hơn viewport
+     gradient sẽ không phủ hết phần dưới (và fixed cũng hay giật trên iOS). */
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.period-morning {
+  background: linear-gradient(160deg, #fff1f6 0%, #ffe4ef 35%, #f3e6ff 70%, #e9f0ff 100%);
+}
+
+.period-afternoon {
+  background: linear-gradient(160deg, #fff4ec 0%, #ffe6ee 40%, #f0e4ff 75%, #e6ecff 100%);
+}
+
+.period-night {
+  background: linear-gradient(170deg, #131a3a 0%, #1d2350 40%, #2a2258 75%, #3a2a55 100%);
+}
+
+.glass {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Chữ có thể đọc tốt trên cả nền sáng và nền đêm */
+.text-day {
+  color: #4a2b52;
+}
+
+.text-day-soft {
+  color: #7c5c86;
+}
+
+.text-night {
+  color: #f2eeff;
+}
+
+.text-night-soft {
+  color: #c3bbe6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
