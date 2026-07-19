@@ -37,7 +37,7 @@ export default function StarField({ enabled }: { enabled: boolean }) {
         />
       ))}
       <div
-        className="absolute left-6 top-24 text-5xl opacity-80 sm:left-12 sm:top-28"
+        className="absolute left-6 top-24 text-5xl opacity-80 sm:left-12 sm:top-28 animate-moonFloat"
         style={{ filter: "drop-shadow(0 0 18px rgba(255,240,180,0.45))" }}
       >
         🌙

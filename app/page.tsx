@@ -28,6 +28,76 @@ const PERIOD_EMOJI: Record<Period, string> = {
   night: "🌙",
 };
 
+/**
+ * Hiện lời chúc dần từng ký tự như đang gõ tin nhắn. Tôn trọng
+ * prefers-reduced-motion (hiện đủ ngay) và tự reset khi resetKey đổi
+ * (mỗi lần có lời chúc mới). Bấm vào chữ để hiện đủ ngay lập tức.
+ */
+function useTypewriter(text: string, resetKey: number) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+  const skipRef = useRef(false);
+
+  useEffect(() => {
+    skipRef.current = false;
+    setDone(false);
+    setDisplayed("");
+
+    if (!text) {
+      setDone(true);
+      return;
+    }
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (prefersReduced) {
+      setDisplayed(text);
+      setDone(true);
+      return;
+    }
+
+    const chars = Array.from(text);
+    // Câu dài hay ngắn thì tổng thời gian gõ vẫn chỉ khoảng 1-1.6s.
+    const perCharMs = Math.min(45, Math.max(12, 1400 / chars.length));
+
+    let shown = 0;
+    let raf = 0;
+    let last = 0;
+    let acc = 0;
+
+    const tick = (now: number) => {
+      if (skipRef.current) {
+        setDisplayed(text);
+        setDone(true);
+        return;
+      }
+      if (last === 0) last = now;
+      acc += now - last;
+      last = now;
+      while (acc >= perCharMs && shown < chars.length) {
+        shown += 1;
+        acc -= perCharMs;
+      }
+      setDisplayed(chars.slice(0, shown).join(""));
+      if (shown >= chars.length) {
+        setDone(true);
+        return;
+      }
+      raf = window.requestAnimationFrame(tick);
+    };
+
+    raf = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(raf);
+  }, [text, resetKey]);
+
+  const skip = useCallback(() => {
+    skipRef.current = true;
+  }, []);
+
+  return { displayed, done, skip };
+}
+
 export default function Page() {
   const [time, setTime] = useState<VNTime | null>(null);
   const [payload, setPayload] = useState<GreetingPayload | null>(null);
@@ -150,6 +220,9 @@ export default function Page() {
     return () => window.clearInterval(id);
   }, [readTime]);
 
+  const { displayed: typedGreeting, done: typingDone, skip: skipTyping } =
+    useTypewriter(payload?.greeting ?? "", animKey);
+
   const period: Period = time?.period ?? "morning";
   // Trời đã tối từ buổi tối (18:00), không chỉ riêng buổi đêm — nên giao diện tối
   // (nền đêm, sao, chữ sáng màu) áp dụng cho cả hai buổi.
@@ -238,20 +311,29 @@ export default function Page() {
                 />
               </div>
             ) : (
-              <div key={animKey} className="animate-fadeSlide">
+              <div key={animKey}>
                 <p
+                  onClick={typingDone ? undefined : skipTyping}
                   className={[
                     "text-lg leading-relaxed sm:text-xl sm:leading-relaxed",
+                    typingDone ? "" : "cursor-pointer",
                     night ? "text-night" : "text-day",
                   ].join(" ")}
                 >
-                  {payload?.greeting}
+                  {typedGreeting}
+                  {typingDone ? null : (
+                    <span
+                      aria-hidden="true"
+                      className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[2px] animate-pulse bg-current align-middle"
+                    />
+                  )}
                 </p>
 
                 {payload?.encouragement ? (
                   <p
                     className={[
-                      "mt-4 border-t pt-4 text-sm italic leading-relaxed sm:text-base",
+                      "mt-4 border-t pt-4 text-sm italic leading-relaxed sm:text-base transition-opacity duration-500",
+                      typingDone ? "opacity-100" : "opacity-0",
                       night
                         ? "border-white/15 text-night-soft"
                         : "border-black/5 text-day-soft",

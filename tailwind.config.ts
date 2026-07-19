@@ -29,12 +29,17 @@ const config: Config = {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.06)" },
         },
+        moonFloat: {
+          "0%, 100%": { transform: "translateY(0) rotate(-2deg)" },
+          "50%": { transform: "translateY(-10px) rotate(2deg)" },
+        },
       },
       animation: {
         fadeSlide: "fadeSlide 0.6s ease-out both",
         twinkle: "twinkle 3s ease-in-out infinite",
         pulseSoft: "pulseSoft 2.4s ease-in-out infinite",
         floatUp: "floatUp 4s linear infinite",
+        moonFloat: "moonFloat 6s ease-in-out infinite",
       },
     },
   },
