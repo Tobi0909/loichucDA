@@ -27,6 +27,8 @@ export interface VNTime {
   isMonday: boolean;
   isWeekend: boolean;
   isExamDay: boolean;
+  /** Ngày ngay trước ngày thi (daysToExam === 1) — lúc để dặn dò, chúc ngủ ngon */
+  isExamEve: boolean;
   /** Số ngày còn lại tới ngày thi; âm nghĩa là đã qua */
   daysToExam: number;
 }
@@ -128,6 +130,7 @@ export function getVNTime(now: Date = new Date()): VNTime {
     isMonday: p.weekday === 1,
     isWeekend: p.weekday === 0 || p.weekday === 6,
     isExamDay: isoDate === EXAM_DATE,
+    isExamEve: daysToExam === 1,
     daysToExam: Number.isNaN(daysToExam) ? -1 : daysToExam,
   };
 }

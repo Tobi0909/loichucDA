@@ -17,7 +17,7 @@ export const TIME_ZONE = "Asia/Ho_Chi_Minh";
  * Đổi 1 dòng này là đồng hồ đếm ngược tự cập nhật.
  * Qua ngày thi thì countdown tự ẩn.
  */
-export const EXAM_DATE = "2026-09-13";
+export const EXAM_DATE = "2026-08-15";
 
 /** Tên kỳ thi, hiện trong dòng đếm ngược */
 export const EXAM_LABEL = "kỳ thi viên chức";

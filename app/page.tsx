@@ -90,21 +90,35 @@ export default function Page() {
   }, []);
 
   /**
-   * Cho phép xem trước một buổi bất kỳ bằng query param, tiện để kiểm tra giao diện:
+   * Cho phép xem trước một buổi hoặc mốc ngày thi bất kỳ bằng query param,
+   * tiện để kiểm tra giao diện mà không cần đổi ngày thi thật:
    *   /?buoi=sang | /?buoi=chieu | /?buoi=toi
+   *   /?thi=truoc  (xem lời chúc đêm trước ngày thi)
+   *   /?thi=hom    (xem lời chúc đúng ngày thi)
    * Không có param thì dùng giờ thật (Asia/Ho_Chi_Minh).
    */
   const readTime = useCallback((): VNTime => {
     const t = getVNTime();
     if (typeof window === "undefined") return t;
-    const q = new URLSearchParams(window.location.search).get("buoi");
+    const params = new URLSearchParams(window.location.search);
+
+    const q = params.get("buoi");
     const override: Record<string, Period> = {
       sang: "morning",
       chieu: "afternoon",
       toi: "night",
     };
     const p = q ? override[q] : undefined;
-    return p ? { ...t, period: p } : t;
+    let next = p ? { ...t, period: p } : t;
+
+    const thi = params.get("thi");
+    if (thi === "truoc") {
+      next = { ...next, isExamEve: true, isExamDay: false, daysToExam: 1 };
+    } else if (thi === "hom") {
+      next = { ...next, isExamEve: false, isExamDay: true, daysToExam: 0 };
+    }
+
+    return next;
   }, []);
 
   // Khởi tạo sau khi mount (tránh lệch hydration vì giờ giấc)

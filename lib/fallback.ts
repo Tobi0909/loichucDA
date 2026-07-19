@@ -3,6 +3,8 @@ import {
   EXAM_DAY_ENCOURAGEMENTS,
   EXAM_DAY_GREETINGS,
   EXAM_ENCOURAGEMENTS,
+  EXAM_EVE_ENCOURAGEMENTS,
+  EXAM_EVE_GREETINGS,
   GREETINGS_BY_PERIOD,
   MONDAY_NOTES,
   NIGHT_SOFT_NOTES,
@@ -30,6 +32,8 @@ type DeckKey =
   | "encouragement"
   | "examGreeting"
   | "examEncouragement"
+  | "examEveGreeting"
+  | "examEveEncouragement"
   | Period;
 
 /** Bộ deck dùng chung cho cả phiên (giữ trong useRef ở component). */
@@ -45,6 +49,8 @@ export function createGreetingDecks(): Record<DeckKey, Deck<string>> {
     encouragement: new Deck(EXAM_ENCOURAGEMENTS),
     examGreeting: new Deck(EXAM_DAY_GREETINGS),
     examEncouragement: new Deck(EXAM_DAY_ENCOURAGEMENTS),
+    examEveGreeting: new Deck(EXAM_EVE_GREETINGS),
+    examEveEncouragement: new Deck(EXAM_EVE_ENCOURAGEMENTS),
   };
 }
 
@@ -61,6 +67,20 @@ export function buildFallbackGreeting(
   const prefix = fill(decks.prefix.draw() ?? "Hôm nay {date} rồi, ", {
     date: t.shortDate,
   });
+
+  // Đêm trước ngày thi: dặn dò, chúc ngủ ngon (ưu tiên hơn ngày thi).
+  if (t.isExamEve) {
+    const body = decks.examEveGreeting.draw() ?? "mai là ngày thi của {em} rồi.";
+    return {
+      greeting: finish(prefix + body),
+      encouragement: capitalize(
+        finish(
+          decks.examEveEncouragement.draw() ??
+            "Tối nay {em} ngủ ngon nhé, {anh} tin {em}.",
+        ),
+      ),
+    };
+  }
 
   if (t.isExamDay) {
     const body = decks.examGreeting.draw() ?? "hôm nay là ngày thi của {em}.";

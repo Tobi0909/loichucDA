@@ -13,6 +13,7 @@ export default function ExamCountdown({ time, night }: Props) {
   if (time.daysToExam < 0) return null;
 
   const isToday = time.daysToExam === 0;
+  const isEve = time.daysToExam === 1;
 
   return (
     <div
@@ -26,6 +27,10 @@ export default function ExamCountdown({ time, night }: Props) {
       {isToday ? (
         <p className="text-sm font-medium sm:text-base">
           🎯 Hôm nay là ngày thi rồi — bình tĩnh nhé {XUNG_HO_EM}!
+        </p>
+      ) : isEve ? (
+        <p className="text-sm font-medium sm:text-base">
+          🌙 Mai là ngày thi rồi — tối nay {XUNG_HO_EM} ngủ sớm nha!
         </p>
       ) : (
         <p className="text-sm sm:text-base">
