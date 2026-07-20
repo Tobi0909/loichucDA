@@ -471,24 +471,6 @@ export default function Page() {
               </div>
             )}
           </div>
-
-          <button
-            type="button"
-            disabled={loading}
-            onClick={() => {
-              const t = readTime();
-              setTime(t);
-              void loadGreeting(t, mood);
-            }}
-            className={[
-              "mt-6 rounded-full px-7 py-3 text-base font-semibold shadow-md transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60",
-              night
-                ? "bg-gradient-to-r from-indigo-400/90 to-fuchsia-400/90 text-white hover:from-indigo-400 hover:to-fuchsia-400"
-                : "bg-gradient-to-r from-pink-400 to-fuchsia-400 text-white hover:from-pink-500 hover:to-fuchsia-500",
-            ].join(" ")}
-          >
-            {loading ? "Đang viết..." : "Lời chúc khác 💌"}
-          </button>
         </div>
 
         {/* Đếm ngược + chữ ký */}
