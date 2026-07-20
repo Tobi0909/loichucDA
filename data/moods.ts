@@ -43,6 +43,34 @@ export const MOOD_NOTES: Record<Mood, string[]> = {
   ],
 };
 
+/**
+ * Câu đệm ngắn hiện ra ngay sau khi {em} bấm chọn tâm trạng, trước khi lời
+ * chúc thật sự xuất hiện — tạo cảm giác "đang được lắng nghe" thay vì đổi
+ * text tức thì như bấm một cái tab.
+ */
+export const MOOD_TRANSITIONS: Record<Mood, string[]> = {
+  happy: [
+    "Ừm, nghe {em} đang vui vậy thì {anh} cũng phải nói cái này...",
+    "Vậy để {anh} nói với {em} một điều nhé...",
+    "Khoan đã, để {anh} kể {em} nghe cái này...",
+  ],
+  tired: [
+    "Ừm... vậy để {anh} nói với {em} một điều này nhé.",
+    "Khoan đã {em}, nghe {anh} nói cái này đã.",
+    "Được rồi, để {anh} nói với {em} chút này nha.",
+  ],
+  stressed: [
+    "Ừm... vậy hôm nay để {anh} nói với {em} một điều này nhé.",
+    "Khoan đã {em}, để {anh} nói cái này trước đã.",
+    "Được rồi, nghe {anh} nói một chút nha {em}.",
+  ],
+  sad: [
+    "Ừm... vậy để {anh} nói với {em} một điều nhé.",
+    "Khoan đã {em}, nghe {anh} nói cái này đã.",
+    "Được rồi, để {anh} ở đây nói với {em} chút này.",
+  ],
+};
+
 /** Dòng phụ riêng theo tâm trạng — thay cho dòng động viên/dỗ dành mặc định. */
 export const MOOD_ENCOURAGEMENTS: Record<Mood, string[]> = {
   happy: [

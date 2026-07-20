@@ -7,6 +7,7 @@ import Fireworks from "@/components/Fireworks";
 import MusicToggle from "@/components/MusicToggle";
 import StarField from "@/components/StarField";
 import { EASTER_EGGS } from "@/data/easterEgg";
+import { MOOD_TRANSITIONS } from "@/data/moods";
 import { HER_NAME, SIGNATURE, XUNG_HO_EM } from "@/lib/config";
 import { Deck } from "@/lib/deck";
 import {
@@ -22,6 +23,9 @@ import type { WeatherCondition } from "@/lib/weather";
 
 /** Tỉ lệ xuất hiện bất ngờ nhỏ thay cho lời chúc thường. */
 const EASTER_EGG_CHANCE = 0.05;
+
+/** Thời gian giữ câu đệm trên màn hình trước khi lời chúc thật sự hiện ra. */
+const MOOD_TRANSITION_MS = 1300;
 
 function processEasterEgg(greeting: string, encouragement: string): GreetingPayload {
   return {
@@ -124,6 +128,9 @@ export default function Page() {
   // thế nó. Không dùng localStorage nên reset mỗi lần mở lại trang.
   const [mood, setMood] = useState<Mood | null>(null);
   const [fireworksActive, setFireworksActive] = useState(false);
+  // Câu đệm hiện ra ngay sau khi chọn tâm trạng, trước khi lời chúc thật xuất
+  // hiện — không null nghĩa là đang ở "nhịp" chờ này.
+  const [transition, setTransition] = useState<string | null>(null);
 
   // Toàn bộ trạng thái chống lặp nằm trong bộ nhớ (không localStorage).
   const decksRef = useRef<GreetingDecks | null>(null);
@@ -135,6 +142,25 @@ export default function Page() {
   if (easterEggDeckRef.current === null) {
     easterEggDeckRef.current = new Deck(EASTER_EGGS);
   }
+
+  const transitionDecksRef = useRef<Record<Mood, Deck<string>> | null>(null);
+  if (transitionDecksRef.current === null) {
+    transitionDecksRef.current = {
+      happy: new Deck(MOOD_TRANSITIONS.happy),
+      tired: new Deck(MOOD_TRANSITIONS.tired),
+      stressed: new Deck(MOOD_TRANSITIONS.stressed),
+      sad: new Deck(MOOD_TRANSITIONS.sad),
+    };
+  }
+
+  const transitionTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current !== null) {
+        window.clearTimeout(transitionTimerRef.current);
+      }
+    };
+  }, []);
 
   const requestIdRef = useRef(0);
 
@@ -273,14 +299,36 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadGreeting, readTime]);
 
-  /** Chọn/bỏ chọn tâm trạng — bấm lại vào tâm trạng đang chọn để bỏ chọn. */
+  /**
+   * Chọn/bỏ chọn tâm trạng — bấm lại vào tâm trạng đang chọn để bỏ chọn.
+   * Chọn mới (chia sẻ tâm trạng) thì hiện câu đệm ngắn trước, tạo cảm giác
+   * "được lắng nghe" rồi mới để lời chúc xuất hiện. Bỏ chọn thì đổi ngay,
+   * không cần nhịp chờ này.
+   */
   const handleMoodSelect = useCallback(
     (m: Mood) => {
       const next = mood === m ? null : m;
       setMood(next);
       const t = readTime();
       setTime(t);
-      void loadGreeting(t, next);
+
+      if (transitionTimerRef.current !== null) {
+        window.clearTimeout(transitionTimerRef.current);
+        transitionTimerRef.current = null;
+      }
+
+      if (next) {
+        const line = transitionDecksRef.current?.[next].draw();
+        setTransition(capitalize(fill(line ?? "")));
+        transitionTimerRef.current = window.setTimeout(() => {
+          transitionTimerRef.current = null;
+          setTransition(null);
+          void loadGreeting(t, next);
+        }, MOOD_TRANSITION_MS);
+      } else {
+        setTransition(null);
+        void loadGreeting(t, next);
+      }
     },
     [mood, readTime, loadGreeting],
   );
@@ -367,7 +415,15 @@ export default function Page() {
         </div>
 
         {/* Mood picker — bổ sung thêm cho lời chúc theo buổi, không bắt buộc chọn */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+        <p
+          className={[
+            "mt-5 text-center text-sm font-medium sm:text-base",
+            night ? "text-night-soft" : "text-day-soft",
+          ].join(" ")}
+        >
+          Hôm nay {XUNG_HO_EM} đang cảm thấy thế nào?
+        </p>
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           {MOOD_ORDER.map((m) => {
             const meta = MOOD_META[m];
             const selected = mood === m;
@@ -424,7 +480,17 @@ export default function Page() {
                 : "border-white/70 bg-white/55 shadow-pink-200/40",
             ].join(" ")}
           >
-            {loading && !payload ? (
+            {transition ? (
+              <p
+                key={transition}
+                className={[
+                  "animate-fade-in-up text-lg italic leading-relaxed sm:text-xl sm:leading-relaxed",
+                  night ? "text-night-soft" : "text-day-soft",
+                ].join(" ")}
+              >
+                {transition}
+              </p>
+            ) : loading && !payload ? (
               <div className="animate-pulse space-y-3" aria-hidden="true">
                 <div
                   className={`h-5 w-full rounded-full ${night ? "bg-white/20" : "bg-white/70"}`}
